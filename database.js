@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
 
 // Replace the uri string with your connection string.
-const uri =
-"mongodb+srv://miriamsch0531:!E4r6GHaKWEd_RA@cluster0.xjmoop1.mongodb.net/TinyURL?retryWrites=true&w=majority&appName=Cluster0";
+const uri =process.env.DB_URI
 // const uriLocal = "mongodb://localhost:27017/<dbname>";
 
 const connectDB = async () => {

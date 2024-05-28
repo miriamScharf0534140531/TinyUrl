@@ -1,11 +1,11 @@
-import UserModel from "../Models/UserModel";
+import LinksModel from "../Models/LinksModel.js"
 
 
-const UserController = {
+const LinksController = {
   getList: async (req, res) => {
     try {
-      const users = await UserModel.find();//ללא סינון
-      res.json({ users});
+      const links = await LinksModel.find();//ללא סינון
+      res.json({ links});
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
@@ -13,18 +13,18 @@ const UserController = {
 
   getById: async (req, res) => {
     try {
-      const user = await UserModel.findById(req.params.id);//שליפה לפי מזהה
-      res.json(user);
+      const link = await LinksModel.findById(req.params.id);//שליפה לפי מזהה
+      res.json(link);
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
   },
 
   add: async (req, res) => {
-    const { name ,email,password,links} = req.body;
+    const { originalUrl} = req.body;
     try {
-      const newUser = await UserModel.create({ name,email,password,links });//הוספת חדש
-      res.json(newUser);
+      const newLink = await LinksModel.create({ originalUrl });//הוספת חדש
+      res.json(newLink);
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
@@ -33,10 +33,10 @@ const UserController = {
   update: async (req, res) => {
     const { id } = req.params;
     try {
-      const updatedUser = await UserModel.findByIdAndUpdate(id, req.body, {
+      const updatedLink = await LinksModel.findByIdAndUpdate(id, req.body, {
         new: true,
       });//עדכון לפי מזהה
-      res.json(updatedUser);
+      res.json(updatedLink);
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
@@ -45,7 +45,7 @@ const UserController = {
   delete: async (req, res) => {
     const { id } = req.params;
     try {
-      const deleted = await UserModel.findByIdAndDelete(id);//מחיקה לפי מזהה
+      const deleted = await LinksModel.findByIdAndDelete(id);//מחיקה לפי מזהה
       res.json(deleted);
     } catch (e) {
       res.status(400).json({ message: e.message });
@@ -53,4 +53,4 @@ const UserController = {
   },
 };
 
-export default UserController;
+export default LinksController;
