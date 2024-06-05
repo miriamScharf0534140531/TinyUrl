@@ -1,5 +1,7 @@
 import LinksModel from "../Models/LinksModel.js"
-
+import UsersModel from "../Models/UsersModel.js";
+import requestIp from 'request-ip';
+import ip from 'ip';
 
 const LinksController = {
   getList: async (req, res) => {
@@ -14,16 +16,49 @@ const LinksController = {
   getById: async (req, res) => {
     try {
       const link = await LinksModel.findById(req.params.id);//שליפה לפי מזהה
-      res.json(link);
+      if (!link) {
+        return res.status(404).json({ message: 'Link not found' });
+      }
+      let  clientIp = requestIp.getClientIp(req);
+      if (clientIp && ip.isV6Format(clientIp)) {
+        clientIp = ip.toString(ip.toBuffer(clientIp));
+      }
+      const click = {
+        insertedAt: new Date(), 
+        ipAddress: clientIp  
+      };
+      if (link.targetParamName && req.query[link.targetParamName]) {
+        const targetName = req.query[link.targetParamName];
+        click.targetParamValue=targetName;//1/2/3 מספר השלוחה
+        const target = link.targetValues.find(target => target.name === targetName);
+        if (target) {
+            target.value += 1;
+        }
+        else{
+          link.targetValues.push({name:targetName,value:1})
+        }
+    }
+      link.clicks.push(click);
+      await link.save();
+      res.redirect(301, link.originalUrl);
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
   },
 
   add: async (req, res) => {
-    const { originalUrl} = req.body;
+    const { originalUrl,targetParamName,targetValues} = req.body;
     try {
-      const newLink = await LinksModel.create({ originalUrl });//הוספת חדש
+      const user = await UsersModel.findById(req.params.user);
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+      let newLink = {originalUrl};
+      if (targetParamName) newLink.targetParamName = targetParamName;
+      if(targetValues)newLink.targetParamName = targetValues;
+      newLink = await LinksModel.create({ originalUrl});
+      user.links.push(newLink._id);
+      await user.save();
       res.json(newLink);
     } catch (e) {
       res.status(400).json({ message: e.message });
@@ -51,6 +86,28 @@ const LinksController = {
       res.status(400).json({ message: e.message });
     }
   },
+  getClickInfoById: async (req, res) => {
+    try {
+    const link = await LinksModel.findById(req.params.id);//שליפה לפי מזהה
+    if (!link) {
+      return res.status(404).json({ message: 'Link not found' });
+    }
+    const clickInfo = link.clicks.reduce((acc, click) => {
+      const source = click.targetParamValue || 'unknown';
+      if (!acc[source]) {
+        acc[source] = 0;
+      }
+      acc[source]++;
+      return acc;
+    }, {});
+
+    res.json(clickInfo);
+  }catch(e){
+    res.status(400).json({massage:e.massage})
+  }
+}
 };
+
+
 
 export default LinksController;

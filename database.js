@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
-
-// Replace the uri string with your connection string.
+import dotenv from 'dotenv';
+dotenv.config();
 const uri =process.env.DB_URI
 // const uriLocal = "mongodb://localhost:27017/<dbname>";
 
 const connectDB = async () => {
   await mongoose.connect(uri);
+
 };
 const database = mongoose.connection;
 

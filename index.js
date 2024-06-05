@@ -4,12 +4,12 @@ import LinksRouter from './Routers/LinksRouter.js'
 import UsersRouter from './Routers/UsersRouter.js'
 
 
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 import cors from "cors"
 import bodyParser from "body-parser"
 
 connectDB();
-dotenv.config();
+// dotenv.config();
 const app = express()
 app.use(cors())
 app.use(bodyParser.json())

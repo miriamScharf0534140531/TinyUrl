@@ -13,7 +13,7 @@ const UsersController = {
 
   getById: async (req, res) => {
     try {
-      const user = await UsersModel.findById(req.params.id);//שליפה לפי מזהה
+      const user = await UsersModel.findById(req.params.id);
       res.json(user);
     } catch (e) {
       res.status(400).json({ message: e.message });
@@ -23,7 +23,7 @@ const UsersController = {
   add: async (req, res) => {
     const { name ,email,password,links} = req.body;
     try {
-      const newUser = await UsersModel.create({ name,email,password,links });//הוספת חדש
+      const newUser = await UsersModel.create({ name,email,password,links });
       res.json(newUser);
     } catch (e) {
       res.status(400).json({ message: e.message });

@@ -5,8 +5,8 @@ const LinksRouter = express.Router();
 
 LinksRouter.get("/", linksController.getList);
 LinksRouter.get("/:id", linksController.getById);
-LinksRouter.post("/", linksController.add);
+LinksRouter.post("/:user", linksController.add);
 LinksRouter.put("/:id", linksController.update);
 LinksRouter.delete("/:id", linksController.delete);
-
+LinksRouter.get("/:id/clicksInfo",linksController.getClickInfoById);
 export default LinksRouter;
