@@ -5,7 +5,9 @@ const uri =process.env.DB_URI
 // const uriLocal = "mongodb://localhost:27017/<dbname>";
 
 const connectDB = async () => {
-  await mongoose.connect(uri);
+  await mongoose.connect(uri,{
+    ssl: true,
+  });
 
 };
 const database = mongoose.connection;
