@@ -6,14 +6,18 @@ const DefController = {
 
     login: async (req, res) => {
         const { email, password } = req.body;
-        console.log("req.body", email, password);
+        // console.log("req.body", email, password);
         try {
-            const user = await UsersModel.findOne({ email, password });
+            const user = await UsersModel.findOne({ email });
             if (!user) {
                 res.status(401).send({ message: "Invalid credentials" });
             }
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(401).send({ message: "Invalid credentials" });
+            }
             const token = generateToken(user._id, user.name);
-            res.json({ token });
+            res.json({ token, userId: user._id });
         } catch (e) {
             return res.status(400).json({ message: e.message });
         }
@@ -31,7 +35,8 @@ const DefController = {
             const newUser = new UsersModel({ name, email, password: hashedPassword });// יצירת משתמש חדש ושמירתו בבסיס הנתונים
             await newUser.save();
             const token = generateToken(newUser._id, newUser.name);
-            res.json({ token });
+            console.log("ttttttttt::::::",token);
+            res.json({ token,userId: newUser._id  });
         } catch (e) {
             res.status(400).json({ message: e.message });
         }

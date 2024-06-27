@@ -6,4 +6,5 @@ const DefRouter = express.Router();
 
 DefRouter.post("/login", defController.login);
 DefRouter.post("/register",defController.register);
+DefRouter.get('/',(req, res)=>{ res.send('Hello World!')})
 export default DefRouter;
