@@ -6,7 +6,10 @@ const uri =process.env.DB_URI
 
 const connectDB = async () => {
   await mongoose.connect(uri,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
     ssl: true,
+    tlsAllowInvalidCertificates: true 
   });
 
 };
