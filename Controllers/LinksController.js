@@ -1,46 +1,10 @@
 import LinksModel from "../Models/LinksModel.js"
-import UsersModel from "../Models/UsersModel.js";
-import requestIp from 'request-ip';
-import ip from 'ip';
 
 const LinksController = {
   getList: async (req, res) => {
     try {
       const links = await LinksModel.find();//ללא סינון
       res.json({ links});
-    } catch (e) {
-      res.status(400).json({ message: e.message });
-    }
-  },
-
-  getById: async (req, res) => {
-    try {
-      const link = await LinksModel.findById(req.params.id);//שליפה לפי מזהה
-      if (!link) {
-        return res.status(404).json({ message: 'Link not found' });
-      }
-      let  clientIp = requestIp.getClientIp(req);
-      if (clientIp && ip.isV6Format(clientIp)) {
-        clientIp = ip.toString(ip.toBuffer(clientIp));
-      }
-      const click = {
-        insertedAt: new Date(), 
-        ipAddress: clientIp  
-      };
-      if (link.targetParamName && req.query[link.targetParamName]) {
-        const targetName = req.query[link.targetParamName];
-        click.targetParamValue=targetName;//1/2/3 מספר השלוחה
-        const target = link.targetValues.find(target => target.name === targetName);
-        if (target) {
-            target.value += 1;
-        }
-        else{
-          link.targetValues.push({name:targetName,value:1})
-        }
-    }
-      link.clicks.push(click);
-      await link.save();
-      res.redirect(301, link.originalUrl);
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
