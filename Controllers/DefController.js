@@ -1,5 +1,5 @@
 import UsersModel from "../Models/UsersModel.js";
-
+import LinksModel from "../Models/LinksModel.js"
 import bcrypt from 'bcryptjs';
 import requestIp from 'request-ip';
 import ip from 'ip';
