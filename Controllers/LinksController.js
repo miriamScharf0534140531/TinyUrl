@@ -1,11 +1,14 @@
 import LinksModel from "../Models/LinksModel.js"
-
+import UsersModel from "../Models/UsersModel.js"
 const LinksController = {
   getList: async (req, res) => {
     try {
+      console.log("ddddddddddddddddddddddddddddddddd");
       const links = await LinksModel.find();//ללא סינון
+      console.log("kkkkkkkkk",links);
       res.json({ links});
     } catch (e) {
+      console.log("Error!!!!!!!!!!!!!");
       res.status(400).json({ message: e.message });
     }
   },
@@ -13,12 +16,12 @@ const LinksController = {
   add: async (req, res) => {
     const { originalUrl,targetParamName,targetValues,userId} = req.body;
     try {
-      const user = await UsersModel.findById(req.params.user);
+      const user = await UsersModel.findById(userId);
       if (!user) {
           return res.status(404).json({ message: 'User not found' });
       }
       let newLink = {originalUrl,userId};
-      const linkExists = user.links.some(link => link.id === newLink.id);
+      const linkExists = user.links.some(link => link.equals(newLink.id));
       if (linkExists) {
         return res.status(409).json( {message: 'Link already exists' });
       }
@@ -26,7 +29,10 @@ const LinksController = {
       if (targetParamName) newLink.targetParamName = targetParamName;
       if(targetValues)newLink.targetParamName = targetValues;
       newLink = await LinksModel.create(newLink);
+      console.log("come to here");
+      console.log("user before::",user);
       user.links.push(newLink._id);
+      console.log("user after::",user);
       await user.save();
       res.json(newLink);
     } catch (e) {
